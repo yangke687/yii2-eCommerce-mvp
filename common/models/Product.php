@@ -170,6 +170,11 @@ class Product extends \yii\db\ActiveRecord
     public function getImageUrl()
     {
         $baseUrl = Yii::$app->params['frontendUrl'];
+
+        if (!$this->image) {
+            return Yii::$app->params['frontendUrl'] . '/img/no-data.svg';
+        }
+
         return $baseUrl . '/storage' . $this->image;
     }
 }
