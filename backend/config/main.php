@@ -6,6 +6,8 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
+require_once(__DIR__.'/../../common/config/functions.php');
+
 return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
