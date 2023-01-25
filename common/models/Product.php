@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\FileHelper;
+use yii\helpers\StringHelper;
 use yii\web\UploadedFile;
 
 /**
@@ -176,5 +177,10 @@ class Product extends \yii\db\ActiveRecord
         }
 
         return $baseUrl . '/storage' . $this->image;
+    }
+
+    public function getShortDesc()
+    {
+        return StringHelper::truncateWords(strip_tags($this->description), 30);
     }
 }

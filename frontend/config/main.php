@@ -6,8 +6,11 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
+require_once(__DIR__.'/../../common/config/functions.php');
+
 return [
     'id' => 'app-frontend',
+    'name' => 'Yii2 E-commerce',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
@@ -36,15 +39,13 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
-        'db' =>  require(__DIR__ . '/../../common/config/db.php')
+        'db' => require(__DIR__ . '/../../common/config/db.php')
     ],
     'params' => $params,
 ];
