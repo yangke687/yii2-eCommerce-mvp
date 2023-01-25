@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\models;
 
 use Yii;
@@ -13,6 +14,8 @@ class SignupForm extends Model
     public $username;
     public $email;
     public $password;
+    public $firstname;
+    public $lastname;
 
 
     /**
@@ -21,6 +24,10 @@ class SignupForm extends Model
     public function rules()
     {
         return [
+            ['firstname', 'string', 'max' => 255],
+            ['firstname', 'required'],
+            ['lastname', 'string', 'max' => 255],
+            ['lastname', 'required'],
             ['username', 'trim'],
             ['username', 'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
@@ -47,9 +54,11 @@ class SignupForm extends Model
         if (!$this->validate()) {
             return null;
         }
-        
+
         $user = new User();
         $user->username = $this->username;
+        $user->firstname = $this->firstname;
+        $user->lastname = $this->lastname;
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
