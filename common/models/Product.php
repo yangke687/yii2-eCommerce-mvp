@@ -170,13 +170,18 @@ class Product extends \yii\db\ActiveRecord
 
     public function getImageUrl()
     {
+        return self::formatImageUrl($this->image);
+    }
+
+    public static function formatImageUrl($imagePath)
+    {
         $baseUrl = Yii::$app->params['frontendUrl'];
 
-        if (!$this->image) {
-            return Yii::$app->params['frontendUrl'] . '/img/no-data.svg';
+        if ($imagePath) {
+            return $baseUrl . '/storage' . $imagePath;
         }
 
-        return $baseUrl . '/storage' . $this->image;
+        return Yii::$app->params['frontendUrl'] . '/img/no-data.svg';
     }
 
     public function getShortDesc()
