@@ -7,6 +7,7 @@ use common\models\Product;
 use frontend\base\Controller;
 use Yii;
 use yii\filters\ContentNegotiator;
+use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -21,6 +22,12 @@ class CartController extends Controller
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON
                 ],
+            ],
+            [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST', 'DELETE']
+                ]
             ]
         ];
     }
@@ -107,5 +114,25 @@ class CartController extends Controller
                 ];
             }
         }
+    }
+
+    public function actionDelete($id)
+    {
+        if (isGuest()) {
+            $cartItems = Yii::$app->session->get(CartItem::SESSION_KEY, []);
+            unset($cartItems[$id]);
+            Yii::$app->session->set(CartItem::SESSION_KEY, $cartItems);
+        } else {
+            $cartItem = CartItem::findOne([
+                'product_id' => $id,
+                'created_by' => currentUserId()
+            ]);
+
+            if ($cartItem) {
+                $cartItem->delete();
+            }
+        }
+
+        return $this->redirect('/cart/index');
     }
 }

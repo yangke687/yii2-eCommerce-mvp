@@ -41,7 +41,7 @@
             <td>
                 <?= \yii\helpers\Html::a(
                     'Delete',
-                    ['/cart/delete', 'id' => $item['id']],
+                    ['/cart/delete', 'id' => $item['product_id']],
                     [
                         'class' => 'btn btn-sm btn-outline-danger',
                         'data-method' => 'post',
