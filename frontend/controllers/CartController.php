@@ -62,7 +62,6 @@ class CartController extends Controller
     public function actionAdd()
     {
         $id = \Yii::$app->request->post('id');
-
         $product = Product::find()->id($id)->published()->one();
 
         if (!$product) {
@@ -72,6 +71,7 @@ class CartController extends Controller
         if (\Yii::$app->user->isGuest) {
             $cartItem = [
                 'id' => $id,
+                'product_id' => $product->id,
                 'name' => $product->name,
                 'image' => $product->image,
                 'price' => $product->price,
@@ -134,5 +134,40 @@ class CartController extends Controller
         }
 
         return $this->redirect('/cart/index');
+    }
+
+    public function actionChangeQuantity()
+    {
+        $id = \Yii::$app->request->post('product_id');
+        $product = Product::find()->id($id)->published()->one();
+
+        if (!$product) {
+            throw new NotFoundHttpException();
+        }
+
+        $quantity = (int)Yii::$app->request->post('quantity');
+
+        if (isGuest()) {
+            $cartItems = Yii::$app->session->get(CartItem::SESSION_KEY, []);
+
+            if (array_key_exists($id, $cartItems)) {
+                $cartItems[$id]['quantity'] = $quantity;
+                $price = $cartItems[$id]['price'];
+                $cartItems[$id]['total_price'] = round($price * $quantity, 2);
+                Yii::$app->session->set(CartItem::SESSION_KEY, $cartItems);
+            }
+        } else {
+            $cartItem = CartItem::findOne([
+                'product_id' => $id,
+                'created_by' => currentUserId(),
+            ]);
+
+            if ($cartItem) {
+                $cartItem->quantity = $quantity;
+                $cartItem->save();
+            }
+        }
+
+        return CartItem::getTotalQuantity(currentUserId());
     }
 }

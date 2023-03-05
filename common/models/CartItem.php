@@ -18,6 +18,7 @@ use Yii;
 class CartItem extends \yii\db\ActiveRecord
 {
     const SESSION_KEY = 'CART_ITEMS';
+
     /**
      * {@inheritdoc}
      */
@@ -79,5 +80,21 @@ class CartItem extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\CartItemQuery(get_called_class());
+    }
+
+    public static function getTotalQuantity($currentUserId)
+    {
+        $sum = 0;
+
+        if (isGuest()) {
+            $cartItems = Yii::$app->session->get(CartItem::SESSION_KEY, []);
+            foreach ($cartItems as $item) {
+                $sum += (int)$item['quantity'];
+            }
+        } else {
+            $sum = self::find()->userId($currentUserId)->sum('quantity');;
+        }
+
+        return $sum;
     }
 }
