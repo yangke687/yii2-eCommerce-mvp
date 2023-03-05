@@ -13,6 +13,7 @@
 
 <br/>
 
+<?php if (!empty($items)): ?>
 <table class="table table-hover">
     <thead>
     <th>Product</th>
@@ -56,5 +57,10 @@
 <div class="text-right">
     <?= \yii\helpers\Html::a('Checkout', ['/cart/checkout'], ['class' => 'btn btn-primary']) ?>
 </div>
+
+<?php else: ?>
+<p class="text-muted text-center p-5">There are no goods</p>
+<?php endif; ?>
+
 
 

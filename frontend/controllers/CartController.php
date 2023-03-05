@@ -29,7 +29,7 @@ class CartController extends Controller
     {
         if (Yii::$app->user->isGuest) {
             // get the items from session
-            $items = [];
+            $items = Yii::$app->session->get(CartItem::SESSION_KEY, []);
         } else {
             // get the items from db
             $items = CartItem::findBySql("
@@ -63,7 +63,26 @@ class CartController extends Controller
         }
 
         if (\Yii::$app->user->isGuest) {
-            // TODO: save in session
+            $cartItem = [
+                'id' => $id,
+                'name' => $product->name,
+                'image' => $product->image,
+                'price' => $product->price,
+                'quantity' => 1,
+                'total_price' => $product->price,
+            ];
+
+            $cartItems = Yii::$app->session->get(CartItem::SESSION_KEY, []);
+
+            if (in_array($id, array_keys($cartItems))) {
+                $quantity = $cartItems[$id]['quantity'] + 1;
+                $cartItems[$id]['quantity'] = $quantity;
+                $cartItems[$id]['total_price'] = round($cartItems[$id]['price'] * $quantity, 2);
+            } else {
+                $cartItems[$id] = $cartItem;
+            }
+
+            Yii::$app->session->set(CartItem::SESSION_KEY, $cartItems);
         } else {
             $userId = Yii::$app->user->id;
             $cartItem = CartItem::find()->userId($userId)->productId($id)->one();
